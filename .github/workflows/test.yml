@@ -36,7 +36,7 @@ jobs:
 
           # Delete Latest
           glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}"
-          tea-cli r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}"
+          tea-cli r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}" --login "gitea.com"
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -51,6 +51,7 @@ jobs:
 
           # Save Tag and Release Name
           echo "release_name=$NAME" >> "$GITHUB_ENV"
+          echo $release_name
 
           # Sync Release
           glab release create "test-latest" testfiles/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
