@@ -36,8 +36,8 @@ jobs:
           echo "release_name=$NAME" >> "$GITHUB_ENV"
 
           # Delete Latest
-          glab release delete "test-latest" -y -t
-          tea-cli r rm -y --delete-tag "test-latest"
+          glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}"
+          tea-cli r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}"
 
 
           # Sync Release
