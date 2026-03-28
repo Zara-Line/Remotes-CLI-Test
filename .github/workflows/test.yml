@@ -37,6 +37,9 @@ jobs:
 
           # Delete Latest
           glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}"
+          tea-cli login ls
+          tea-cli login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
+          tea-cli login default gitea.com
           tea-cli r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}"
         continue-on-error: true
         env:
