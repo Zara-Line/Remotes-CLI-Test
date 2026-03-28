@@ -2,23 +2,23 @@ name: Test
 
 on:
   workflow_dispatch:
-  
+
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [win64,winarm64,linux64,linuxarm64]
-        variant: [nonfree-shared,nonfree-shared 8.0,nonfree-shared 7.1,nonfree-shared 6.1,nonfree,nonfree 8.0,nonfree 7.1,nonfree 6.1]
+    environment: external-remotes-access
     steps:
       - name: Test
         run: |
-          VARIANT="${{ matrix.variant }}"
-          PREFIX="${VARIANT%% *}"
-          SLUG="${{ matrix.target }}-${PREFIX// /-}"
-          echo "artifact_slug=${SLUG// /-}" >> $GITHUB_OUTPUT
-          echo "Generated: ${SLUG}"
+          # Prepare Tools
+          sudo apt-get install -y glab tea-cli 7zip
+          sudo 7z x ./tools/forgejo-cli-linux.7z -o/usr/bin
+          sudo chmod +x /usr/bin/fj
+
+          # Authorize Tools
+          glab auth login --hostname "gitlab.com" --token "${{ secrets.GITLAB_COM_TOKEN }}"
+          tea login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
+          fj -H codeberg.org auth add-key "${{ vars.MY_ID }}" "${{ secrets.GITEA_COM_TOKEN }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
