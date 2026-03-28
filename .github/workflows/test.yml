@@ -20,8 +20,9 @@ jobs:
 
           # Prepare Tools
           sudo apt-get install -y glab 7zip
-          sudo 7z x ./tools/*.7z -o/usr/bin
-          sudo chmod -R +x /usr/bin/fj /usr/bin/tea
+          sudo 7z x ./tools/tea-linux-amd64.7z -o/usr/bin
+          sudo 7z x ./tools/forgejo-cli-linux.7z -o/usr/bin
+          sudo chmod +x /usr/bin/fj /usr/bin/tea
 
           # Authorize Tools
           glab auth login --hostname "gitlab.com" --token "${{ secrets.GITLAB_COM_TOKEN }}"
@@ -54,7 +55,7 @@ jobs:
           echo "release_name=$NAME" >> "$GITHUB_ENV"
 
           # Sync Release
-          glab release create "test-latest" testfiles/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
-          tea r c --tag "test-latest" -a testfiles/* --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
+          glab release create "test-latest" tools/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
+          tea r c --tag "test-latest" -a tools/* --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
