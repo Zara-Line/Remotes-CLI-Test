@@ -27,5 +27,21 @@ jobs:
           glab auth login --hostname "gitlab.com" --token "${{ secrets.GITLAB_COM_TOKEN }}"
           tea-cli login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
           fj -H codeberg.org auth add-key "${{ vars.MY_ID }}" "${{ secrets.GITEA_COM_TOKEN }}"
+
+          # Vars
+          RELDATE="$(date +'%Y-%m-%d %H:%M')"
+          NAME="Test $RELDATE"
+
+          # Save Tag and Release Name
+          echo "release_name=$NAME" >> "$GITHUB_ENV"
+
+          # Delete Latest
+          glab release delete "test-latest" -y -t
+          tea-cli r rm -y --delete-tag "test-latest"
+
+
+          # Sync Release
+          glab release create "test-latest" testfiles/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
+          tea-cli r c --tag "test-latest" -a testfiles/* --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}" --login "gitea.com"
         env:
           GITHUB_TOKEN: ${{ github.token }}
