@@ -9,8 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: external-remotes-access
     steps:
+      - name: Free Disk-Space
+        run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /opt/ghc /usr/local/.ghcup /usr/local/lib/android && df -h
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Test
         run: |
+          set -xe
+          shopt -s nullglob
+
           # Prepare Tools
           sudo apt-get install -y glab tea-cli 7zip
           sudo 7z x ./tools/forgejo-cli-linux.7z -o/usr/bin
