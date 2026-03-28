@@ -57,6 +57,6 @@ jobs:
 
           # Sync Release
           glab release create "test-latest" tools/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
-          tea r c --tag "test-latest" -a tools/* --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
+          tea r c --tag "test-latest" $(printf -- '-a %s ' tools/*) --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
