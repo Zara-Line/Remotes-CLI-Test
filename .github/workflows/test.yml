@@ -19,14 +19,14 @@ jobs:
           shopt -s nullglob
 
           # Prepare Tools
-          sudo apt-get install -y glab tea-cli 7zip
-          sudo 7z x ./tools/forgejo-cli-linux.7z -o/usr/bin
-          sudo chmod +x /usr/bin/fj
+          sudo apt-get install -y glab 7zip
+          sudo 7z x ./tools/*.7z -o/usr/bin
+          sudo chmod -R +x /usr/bin/fj /usr/bin/tea
 
           # Authorize Tools
           glab auth login --hostname "gitlab.com" --token "${{ secrets.GITLAB_COM_TOKEN }}"
-          tea-cli login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
-          tea-cli login default gitea.com
+          tea login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
+          tea login default "gitea.com"
           fj -H codeberg.org auth add-key "${{ vars.MY_ID }}" "${{ secrets.GITEA_COM_TOKEN }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -37,10 +37,7 @@ jobs:
 
           # Delete Latest
           glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}"
-          tea-cli login ls
-          tea-cli login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
-          tea-cli login default gitea.com
-          tea-cli r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}"
+          tea r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}"
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -58,6 +55,6 @@ jobs:
 
           # Sync Release
           glab release create "test-latest" testfiles/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
-          tea-cli r c --tag "test-latest" -a testfiles/* --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
+          tea r c --tag "test-latest" -a testfiles/* --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
