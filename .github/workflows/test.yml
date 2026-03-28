@@ -52,7 +52,9 @@ jobs:
           NAME="Test $RELDATE"
 
           # Save Tag and Release Name
-          echo "release_name=$NAME" >> "$GITHUB_ENV"
+          mkdir ./env
+          echo $NAME > env/release_name
+          release_name=$(cat env/release_name)
 
           # Sync Release
           glab release create "test-latest" tools/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
