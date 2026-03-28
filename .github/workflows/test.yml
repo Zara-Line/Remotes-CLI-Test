@@ -25,7 +25,7 @@ jobs:
 
           # Authorize Tools
           glab auth login --hostname "gitlab.com" --token "${{ secrets.GITLAB_COM_TOKEN }}"
-          tea login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
+          tea-cli login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
           fj -H codeberg.org auth add-key "${{ vars.MY_ID }}" "${{ secrets.GITEA_COM_TOKEN }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
