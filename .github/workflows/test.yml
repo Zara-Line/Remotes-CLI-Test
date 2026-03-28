@@ -37,9 +37,8 @@ jobs:
           shopt -s nullglob
 
           # Delete Latest
-          glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}"
-          tea r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}"
-        continue-on-error: true
+          glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}" || true
+          tea r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}" || true
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Create Latest
