@@ -21,14 +21,12 @@ jobs:
           # Prepare Tools
           sudo apt-get install -y glab 7zip
           sudo 7z x ./tools/tea-linux-amd64.7z -o/usr/bin
-          sudo 7z x ./tools/forgejo-cli-linux.7z -o/usr/bin
-          sudo chmod +x /usr/bin/fj /usr/bin/tea
+          sudo chmod +x /usr/bin/tea
 
           # Authorize Tools
           glab auth login --hostname "gitlab.com" --token "${{ secrets.GITLAB_COM_TOKEN }}"
           tea login add -u "gitea.com" -t "${{ secrets.GITEA_COM_TOKEN }}"
-          tea login default "gitea.com"
-          fj -H codeberg.org auth add-key "${{ vars.MY_ID }}" "${{ secrets.GITEA_COM_TOKEN }}"
+          tea login add -u "codeberg.org" -t "${{ secrets.CODEBERG_ORG_TOKEN }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Delete Old
@@ -38,7 +36,8 @@ jobs:
 
           # Delete Latest
           glab release delete "test-latest" -y -t -R "${{ vars.REPOSITORY_NAME }}" || true
-          tea r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}" || true
+          tea r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}" --login "gitea.com" || true
+          tea r rm -y --delete-tag "test-latest" -r "${{ vars.REPOSITORY_NAME }}" --login "codeberg.org" || true
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Create Latest
@@ -57,6 +56,7 @@ jobs:
 
           # Sync Release
           glab release create "test-latest" tools/* -r "master" -n "$release_name" -F "./README.md" -R "${{ vars.REPOSITORY_NAME }}"
-          tea r c --tag "test-latest" $(printf -- '-a %s ' tools/*) --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}"
+          tea r c --tag "test-latest" $(printf -- '-a %s ' tools/*) --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}" --login "gitea.com"
+          tea r c --tag "test-latest" $(printf -- '-a %s ' tools/*) --target "master" -t "$release_name" -f "./README.md" -r "${{ vars.REPOSITORY_NAME }}" --login "codeberg.org"
         env:
           GITHUB_TOKEN: ${{ github.token }}
